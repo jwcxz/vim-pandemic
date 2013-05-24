@@ -112,7 +112,7 @@ class Pandemic:
             updates = args;
 
         for bundle in updates:
-            print "bundle"
+            self.printer.message("Updating %s..." % bundle);
             self.bundles[bundle].update();
 
 
