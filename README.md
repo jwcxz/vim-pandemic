@@ -45,7 +45,7 @@ Using the `add BUNDLE TYPE SOURCE` command, we can easily add new bundles.
 one of the source types (run `pandemic --types` to find out supported types`),
 and `SOURCE` is the remote source.  For example:
 
-```shell
+```
 $ pandemic add nerdtree git https://github.com/scrooloose/nerdtree.git
 ```
 
@@ -53,14 +53,14 @@ will add NERD Tree to our bundle list.  It's being developed in a Git repo on Gi
 
 What if we wanted something from Mercurial because the developer is some kind of hipster?  Easy:
 
-```shell
+```
 $ pandemic add l9 hg https://bitbucket.org/ns9tks/vim-l9
 ```
 
 [pandemic] also supports things that aren't version-controlled.  For example,
 you might have a directory that you simply want to copy over to your bundle
 directory.  For that, you can just use the `local` type.  Or, you might have a
-directory that contains its own update script called `.update'; for that, you
+directory that contains its own update script called `.update`; for that, you
 can use the type `script`.
 
 Adding new types is as easy as modifying `bundle.py` to have more
@@ -71,7 +71,7 @@ Adding new types is as easy as modifying `bundle.py` to have more
 
 Simply:
 
-```shell
+```
 $ pandemic remove nerdtree
 ```
 
@@ -83,7 +83,7 @@ directory.  I highly don't recommend that.
 
 To update all bundles, just run:
 
-```shell
+```
 $ pandemic update
 ```
 
@@ -99,7 +99,7 @@ $ pandemic update nerdtree tagbar
 Let's say you removed some entries from [pandemic]'s database file but left the
 physical bundle files in the bundle directory.  You can use:
 
-```shell
+```
 $ pandemic list-dead
 ```
 
@@ -115,7 +115,7 @@ when you are trying to perform operations.  Simply keep using the original name
 in your tasks.  For example, let's say you installed NERD Tree, but then you
 disabled it and now you want to remove it.  That's okay!
 
-```shell
+```
 $ pandemic add nerdtree git https://github.com/scrooloose/nerdtree.git
 $ mv ~/.bundle.remote/nerdtree ~/.bundle.remote/nerdtree~
 $ pandemic remove nerdtree
@@ -145,5 +145,5 @@ only with Git repositories.
 [pathogen]:https://github.com/tpope/vim-pathogen
 [Vundle]:https://github.com/gmarik/vundle
 [vim-pandemic]:http://jwcxz.com/git/vim-pandemic
-[pandemic]:[vim-pandemic]
+[pandemic]:http://jwcxz.com/git/vim-pandemic
 [vim-epidemic]:https://github.com/AlphaHydrae/vim-epidemic
