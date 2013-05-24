@@ -96,6 +96,15 @@ $ pandemic update nerdtree tagbar
 ```
 
 
+### Listing Bundles
+
+Try:
+
+```
+$ pandemic list | column -t
+```
+
+
 ### Synchronization
 
 Let's say you removed some entries from [pandemic]'s database file but left the
