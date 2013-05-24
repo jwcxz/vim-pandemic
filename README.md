@@ -28,9 +28,9 @@ You can run [pandemic] from anywhere, so stick it somewhere.  By default,
 [pandemic] manages bundles in `~/.vim/bundle.remote`.  So, in your `~/.vimrc`,
 you're going to want:
 
-    ```vim
-    execute pathogen#infect('bundle.remote/{}')
-    ```
+```vim
+execute pathogen#infect('bundle.remote/{}')
+```
 
 In addition to having calls to `pathogen#infect()` for your local bundles.
 
