@@ -3,18 +3,19 @@ vim-pandemic
 
 Manage remote [pathogen] bundles from multiple source types.
 
-I've been looking for a way to maintain a ~/.vim{,rc} repository.  The natural
-solution is to just have a git repo containing my ~/.vimrc and contents of
-~/.vim.  Sure, that's no problem.
+I've been looking for a way to maintain a `~/.vim{,rc}` repository.  The natural
+solution is to just have a Git repo containing my `~/.vimrc` and contents of
+`~/.vim`.  Sure, that's no problem.
 
 Since I use [pathogen], I have a variety of bundles that are repositories of
-various types: git, mercurial, etc.  I strongly believe in the philosophy that
+various types: Git, Mercurial, etc.  I strongly believe in the philosophy that
 version control should not be tied into the operation of the thing it is
 tracking.  For that reason, using Git submodules as part of my vim
 configuration repository just seems stupid.  This was not the problem that
 submodules tries to solve and it leads to a lot of problems and configuration
 difficulties.  My adherence to this philosophy also means that I don't want to
-use systems like [Vundle].
+use systems like [Vundle], though I appreciate the author's work in developing
+this sort of workflow.
 
 So I decided to build a way to easily manage remote repositories outside of
 vim, without requiring the use of a specific repository.  The result is
@@ -23,20 +24,21 @@ vim, without requiring the use of a specific repository.  The result is
 
 ## Getting Started
 
-You can run [pandemic] from anywhere.  By default, [pandemic] manages
-bundles in `~/.vim/bundle.remote`.  So, in your `~/.vimrc`, you're going to
-want:
+You can run [pandemic] from anywhere, so stick it somewhere.  By default,
+[pandemic] manages bundles in `~/.vim/bundle.remote`.  So, in your `~/.vimrc`,
+you're going to want:
 
     ```vim
     execute pathogen#infect('bundle.remote/{}')
     ```
 
-In addition to having calls to `pathogen#infect` for your local bundles.
+In addition to having calls to `pathogen#infect()` for your local bundles.
 
 
 ## Managing Bundles
 
 Using [pandemic] is easy!  Like, really, it actually is easy.
+
 
 ### Adding a bundle
 
