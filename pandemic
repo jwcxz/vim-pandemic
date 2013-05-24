@@ -1,0 +1,163 @@
+#!/usr/bin/env python2
+
+import argparse, ConfigParser, os, sys
+
+from printer import Printer
+from bundle import Bundle
+
+DEF_CONFIG    = '~/.vim/pandemic-bundles';
+DEF_BUNDLEDIR = '~/.vim/bundle.remote';
+
+class Pandemic:
+    bundles = {};
+
+    def __init__(self, actionstr, config=DEF_CONFIG, bundledir=DEF_BUNDLEDIR, printer=Printer()):
+        self.printer = printer;
+
+        self.bundledir = os.path.expanduser(bundledir);
+
+        if not os.path.exists(self.bundledir):
+            os.mkdir(self.bundledir);
+
+        self.config = os.path.expanduser(config);
+
+        if len(actionstr) > 0:
+            action_args = actionstr[1:];
+
+            actions = { 'list'        : self.list,
+                        'add'         : self.add,
+                        'remove'      : self.remove,
+                        'update'      : self.update,
+                        'list-dead'   : self.listdead };
+
+            if actionstr[0] not in actions.keys():
+                self.printer.error("Invalid action.");
+
+            self.action = actions[actionstr[0]];
+            
+            self.parse_config();
+            self.action(action_args);
+        else:
+            self.printer.error("No action specified.");
+            sys.exit(1);
+
+
+    def parse_config(self):
+        cfg = ConfigParser.SafeConfigParser();
+        cfg.read(self.config);
+
+        self.bundles = {};
+
+        for bundle in cfg.sections():
+            if not cfg.has_option(bundle, 'source') or \
+               not cfg.has_option(bundle, 'type'):
+                   self.printer.error("Bundle '%s' is malformed." % bundle); 
+                   continue;
+
+            # append bundle to bundle list
+            self.__append_to_bundles(bundle, cfg.get(bundle, 'source'),
+                    cfg.get(bundle, 'type'));
+
+
+    def save_config(self):
+        cfg = ConfigParser.SafeConfigParser();
+        for b in self.bundles:
+            bundle = self.bundles[b];
+            cfg.add_section(b);
+            cfg.set(b, 'source', bundle.source);
+            cfg.set(b, 'type', bundle.btype);
+
+        f = open(self.config, 'w');
+        cfg.write(f);
+        f.close();
+
+
+    def list(self, args):
+        for b in self.bundles:
+            bundle = self.bundles[b];
+            if b == bundle.bname:
+                e = "enabled";
+            else:
+                e = "disabled";
+            self.printer.message("%s: %s %s %s" %(b, e, bundle.btype, bundle.source));
+
+
+    def add(self, args):
+        bundle, btype, source = args;
+        
+        # add the new bundle to the list
+        self.__append_to_bundles(bundle, source, btype);
+        # get the new bundle to the directory
+        self.bundles[bundle].clone();
+        # save the new bundle list
+        self.save_config();
+
+
+    def remove(self, args):
+        bundle = args[0];
+
+        if len(args) == 2 and args[1] == "keep":
+            self.printer.warn("Keeping bundle '%s'... this is a bad idea." % bundle);
+        else:
+            self.bundles[bundle].remove();
+
+        self.__delete_from_bundles(bundle);
+        self.save_config();
+
+
+    def update(self, args):
+        if len(args) == 0:
+            updates = self.bundles.keys();
+        else:
+            updates = args;
+
+        for bundle in updates:
+            print "bundle"
+            self.bundles[bundle].update();
+
+
+    def listdead(self, args):
+        # list bundles that are no longer in the config
+        # TODO: write this
+        found_bundles = os.listdir(self.bundledir);
+
+        for b in found_bundles:
+            if b not in self.bundles.keys():
+                self.printer.message("Bundle %s not found in database." %b);
+
+
+    def __append_to_bundles(self, bundle, source, btype):
+        self.bundles[bundle] = Bundle(bundle, source, btype, self.bundledir, self.printer);
+
+    def __delete_from_bundles(self, bundle):
+        del self.bundles[bundle];
+
+
+
+if __name__ == "__main__":
+    p = argparse.ArgumentParser(description="Manage vim-pathogen bundles.");
+
+    p.add_argument('-c', '--config', dest='config', action='store',
+            default=DEF_CONFIG,
+            help='remote bundle configuration file');
+
+    p.add_argument('-b', '--bundle-directory', dest='bundledir',
+            action='store', default=DEF_BUNDLEDIR,
+            help='directory contaning pandemic-managed bundles');
+
+    p.add_argument('-t', '--show-types', dest='showtypes',
+            action='store_true', default=False,
+            help='show supported source types');
+
+    p.add_argument(dest='action', action='store', nargs='*',
+            help='action (list, add BUNDLE TYPE SOURCE, remove BUNDLE, update [BUNDLE, BUNDLE, ...], list-dead)');
+
+    args = p.parse_args();
+
+    printer = Printer();
+
+    if args.showtypes == True:
+        import bundle
+        printer.message("Supported types: %s" % ' '.join(bundle.actioners.keys()));
+
+    pan = Pandemic(args.action, args.config, args.bundledir, printer);
