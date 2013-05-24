@@ -44,7 +44,7 @@ Using [pandemic] is easy!  Like, really, it actually is easy.
 
 Using the `add BUNDLE TYPE SOURCE` command, we can easily add new bundles.
 `BUNDLE` can be any name you want to give the bundle you're storing, `TYPE` is
-one of the source types (run `pandemic --types` to find out supported types`),
+one of the source types (run `pandemic --types` to find out supported types),
 and `SOURCE` is the remote source.  For example:
 
 ```
