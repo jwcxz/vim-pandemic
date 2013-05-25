@@ -29,7 +29,7 @@ Clone this repo, and then run:
 sudo python setup.py install
 ```
 
-This places the [pandemic] executable onto your path (probabl at
+This places the [pandemic] executable onto your path (probably at
 `/usr/local/bin/pandemic`), and installs its dependencies to your
 `site-packages` folder.
 
