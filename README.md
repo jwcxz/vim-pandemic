@@ -21,11 +21,21 @@ So I decided to build a way to easily manage remote repositories outside of
 vim, without requiring the use of a specific repository.  The result is
 [vim-pandemic].
 
+## Installation
+
+Clone this repo, and then run:
+
+```
+sudo python setup.py install
+```
+
+This places the [pandemic] executable onto your path (probabl at
+`/usr/local/bin/pandemic`), and installs its dependencies to your
+`site-packages` folder.
 
 ## Getting Started
 
-You can run [pandemic] from anywhere, so stick it somewhere.  By default,
-[pandemic] manages bundles in `~/.vim/bundle.remote`.  So, in your `~/.vimrc`,
+By default, [pandemic] manages bundles in `~/.vim/bundle.remote`.  So, in your `~/.vimrc`,
 you're going to want:
 
 ```vim
