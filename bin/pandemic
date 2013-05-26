@@ -1,9 +1,9 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 
 import argparse, ConfigParser, os, sys
 
-from printer import Printer
-from bundle import Bundle
+from Pandemic.printer import Printer
+from Pandemic.bundle import Bundle
 
 DEF_CONFIG    = '~/.vim/pandemic-bundles';
 DEF_BUNDLEDIR = '~/.vim/bundle.remote';
