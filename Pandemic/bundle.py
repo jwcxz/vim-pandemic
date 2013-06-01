@@ -1,4 +1,4 @@
-import os, shutil, subprocess
+import os, shutil, re, subprocess, urllib
 
 class BundleActioner:
     def __init__(self): pass;
@@ -54,10 +54,30 @@ class BundleScript(BundleActioner):
         return subprocess.check_output(['./.update']);
     
 
+class BundleVimOrg(BundleActioner):
+    def clone(self, source, name):
+        f = urllib.urlopen("http://www.vim.org/scripts/script.php?script_id=%s" % source)
+        data = f.read();
+        f.close();
+
+        id_re = re.compile('download_script.php\?src_id=(?P<id>\d+)')
+        src_id = max([int(i) for i in id_re.findall(data)]);
+
+        download_url = "http://www.vim.org/scripts/download_script.php?src_id=%d" % src_id;
+
+        # figure out how to handle vim_scripts
+
+        return ""
+
+    def update(self):
+        return self.clone();
+
+
 actioners = { 'git'    : BundleGit,
               'hg'     : BundleHg,
               'local'  : BundleLocal,
-              'script' : BundleScript };
+              'script' : BundleScript,
+              'vimorg' : BundleVimOrg };
 
 
 class Bundle:
