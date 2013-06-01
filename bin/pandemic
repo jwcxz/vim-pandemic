@@ -94,14 +94,19 @@ class Pandemic:
 
 
     def remove(self, args):
-        bundle = args[0];
-
-        if len(args) == 2 and args[1] == "keep":
+        if len(args) > 1 and args[0] == '-k':
             self.printer.warn("Keeping bundle '%s'... this is a bad idea." % bundle);
+            keep = True;
+            bundles = args[1:];
         else:
-            self.bundles[bundle].remove();
+            keep = False;
+            bundles = args;
 
-        self.__delete_from_bundles(bundle);
+        for bundle in bundles:
+            self.__delete_from_bundles(bundle);
+            if keep == False:
+                self.bundles[bundle].remove();
+
         self.save_config();
 
 
@@ -118,7 +123,6 @@ class Pandemic:
 
     def listdead(self, args):
         # list bundles that are no longer in the config
-        # TODO: write this
         found_bundles = os.listdir(self.bundledir);
 
         for b in found_bundles:
