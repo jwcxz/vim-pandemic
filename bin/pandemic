@@ -157,7 +157,7 @@ if __name__ == "__main__":
     printer = Printer();
 
     if args.showtypes == True:
-        import bundle
-        printer.message("Supported types: %s" % ' '.join(bundle.actioners.keys()));
+        from Pandemic.bundle import actioners
+        printer.message("Supported types: %s" % ' '.join(actioners.keys()));
 
     pan = Pandemic(args.action, args.config, args.bundledir, printer);
