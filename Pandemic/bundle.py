@@ -3,32 +3,38 @@ import os, shutil, subprocess
 class BundleActioner:
     def __init__(self): pass;
 
-    def clone(self, source, name): pass;
-    def update(self): pass;
+    def clone(self, source, name):
+        return "";
+
+    def update(self):
+        return "";
 
     def remove(self, name):
         shutil.rmtree(name);
+        return "";
 
 
 class BundleGit(BundleActioner):
     def clone(self, source, name):
-        print subprocess.check_output(['git', 'clone', source, name]);
+        return subprocess.check_output(['git', 'clone', source, name]);
     def update(self):
-        print subprocess.check_output(['git', 'pull']);
+        return subprocess.check_output(['git', 'pull']);
     
 class BundleHg(BundleActioner):
     def clone(self, source, name):
-        print subprocess.check_output(['hg', 'clone', source, name]);
+        return subprocess.check_output(['hg', 'clone', source, name]);
     def update(self):
-        print subprocess.check_output(['hg', 'pull']);
+        return subprocess.check_output(['hg', 'pull']);
     
 class BundleLocal(BundleActioner):
     def clone(self, source, name):
-        print subprocess.check_output(['cp', '-R', source, name]);
+        outmsg = subprocess.check_output(['cp', '-R', source, name]);
 
         f = open("%s/.source" %name, 'w');
         f.write(source);
         f.close();
+
+        return outmsg;
 
     def update(self):
         f = open(".source", 'r');
@@ -38,14 +44,14 @@ class BundleLocal(BundleActioner):
         name = os.path.split(os.getcwd())[1];
 
         os.chdir(os.path.split(os.getcwd())[0]);
-        self.clone(source, name);
+        return self.clone(source, name);
 
 class BundleScript(BundleActioner):
     def clone(self, source, name):
-        print subprocess.check_output(['cp', '-R', source, name]);
+        return subprocess.check_output(['cp', '-R', source, name]);
 
     def update(self):
-        print subprocess.check_output(['./.update']);
+        return subprocess.check_output(['./.update']);
     
 
 actioners = { 'git'    : BundleGit,
@@ -79,7 +85,8 @@ class Bundle:
             self.printer.warn("%s exists!" % (self.bname));
             self.remove();
 
-        self.actioner.clone(self.source, self.name);
+        msg = self.actioner.clone(self.source, self.name);
+        self.printer.message(msg);
         
         self.__restorecwd();
 
@@ -90,7 +97,8 @@ class Bundle:
         os.chdir(self.bdir);
 
         if self.bname != None:
-            self.actioner.remove(self.bname);
+            msg = self.actioner.remove(self.bname);
+            self.printer.message(msg);
         else:
             self.printer.warn("%s doesn't exist!" % (self.name));
 
@@ -104,7 +112,8 @@ class Bundle:
 
         if self.bname != None:
             os.chdir(self.bname);
-            self.actioner.update();
+            msg = self.actioner.update();
+            self.printer.message(msg);
         else:
             self.printer.warn("%s doesn't exist!" % (self.name));
             self.clone();
