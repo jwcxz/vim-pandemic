@@ -103,9 +103,10 @@ class Pandemic:
             bundles = args;
 
         for bundle in bundles:
-            self.__delete_from_bundles(bundle);
-            if keep == False:
+            if not keep:
                 self.bundles[bundle].remove();
+
+            self.__delete_from_bundles(bundle);
 
         self.save_config();
 
