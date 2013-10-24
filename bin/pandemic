@@ -130,6 +130,10 @@ class Pandemic:
             if b not in self.bundles.keys():
                 self.printer.message("Bundle %s not found in database." %b);
 
+        for b in self.bundles.keys():
+            if b not in found_bundles:
+                self.printer.message("Bundle %s not found on filesystem.  Run pandemic update." %b);
+
 
     def __append_to_bundles(self, bundle, source, btype):
         self.bundles[bundle] = Bundle(bundle, source, btype, self.bundledir, self.printer);

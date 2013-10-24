@@ -124,8 +124,9 @@ physical bundle files in the bundle directory.  You can use:
 $ pandemic list-dead
 ```
 
-to find which bundles are still in the directory but not in the database file.
-You can then go delete those yourself.
+to find which bundles are still in the directory but not in the database file
+and vice-versa.  You can then run `pandemic update` to get missing bundles or
+delete extra bundles yourself.
 
 
 ## But what about disabled bundles?

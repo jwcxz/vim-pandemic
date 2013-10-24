@@ -2,7 +2,7 @@ from distutils.core import  setup
 
 setup(
     name="Pandemic",
-    version="1.1.2",
+    version="1.1.4",
     author="http://jwcxz.com/",
     url="http://jwcxz.com/projects/vim-pandemic",
     requires=["argparse"],
