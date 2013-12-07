@@ -61,7 +61,7 @@ class Pandemic:
 
     def save_config(self):
         cfg = ConfigParser.SafeConfigParser();
-        for b in self.bundles:
+        for b in sorted(self.bundles.keys()):
             bundle = self.bundles[b];
             cfg.add_section(b);
             cfg.set(b, 'source', bundle.source);
@@ -73,7 +73,7 @@ class Pandemic:
 
 
     def list(self, args):
-        for b in self.bundles:
+        for b in sorted(self.bundles.keys()):
             bundle = self.bundles[b];
             if b == bundle.bname:
                 e = "enabled";
