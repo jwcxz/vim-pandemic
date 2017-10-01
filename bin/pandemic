@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import argparse, ConfigParser, os, sys
+import argparse, configparser, os, sys
 
 from Pandemic.printer import Printer
 from Pandemic.bundle import Bundle
@@ -30,7 +30,7 @@ class Pandemic:
                         'update'      : self.update,
                         'list-dead'   : self.listdead };
 
-            if actionstr[0] not in actions.keys():
+            if actionstr[0] not in list(actions.keys()):
                 self.printer.error("Invalid action.");
 
             self.action = actions[actionstr[0]];
@@ -43,7 +43,7 @@ class Pandemic:
 
 
     def parse_config(self):
-        cfg = ConfigParser.SafeConfigParser();
+        cfg = configparser.SafeConfigParser();
         cfg.read(self.config);
 
         self.bundles = {};
@@ -60,7 +60,7 @@ class Pandemic:
 
 
     def save_config(self):
-        cfg = ConfigParser.SafeConfigParser();
+        cfg = configparser.SafeConfigParser();
         for b in sorted(self.bundles.keys()):
             bundle = self.bundles[b];
             cfg.add_section(b);
@@ -113,7 +113,7 @@ class Pandemic:
 
     def update(self, args):
         if len(args) == 0:
-            updates = self.bundles.keys();
+            updates = list(self.bundles.keys());
         else:
             updates = args;
 
@@ -127,10 +127,10 @@ class Pandemic:
         found_bundles = os.listdir(self.bundledir);
 
         for b in found_bundles:
-            if b not in self.bundles.keys():
+            if b not in list(self.bundles.keys()):
                 self.printer.message("Bundle %s not found in database." %b);
 
-        for b in self.bundles.keys():
+        for b in list(self.bundles.keys()):
             if b not in found_bundles:
                 self.printer.message("Bundle %s not found on filesystem.  Run pandemic update." %b);
 
@@ -167,6 +167,6 @@ if __name__ == "__main__":
 
     if args.showtypes == True:
         from Pandemic.bundle import actioners
-        printer.message("Supported types: %s" % ' '.join(actioners.keys()));
+        printer.message("Supported types: %s" % ' '.join(list(actioners.keys())));
 
     pan = Pandemic(args.action, args.config, args.bundledir, printer);
