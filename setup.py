@@ -6,6 +6,7 @@ setup(
     author="http://jwcxz.com/",
     url="http://jwcxz.com/projects/vim-pandemic",
     requires=["argparse"],
+    install_requires=["configparser"],
     packages=["Pandemic"], 
     scripts=["bin/pandemic"]
 )
