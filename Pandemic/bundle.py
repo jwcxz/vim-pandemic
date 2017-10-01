@@ -16,19 +16,19 @@ class BundleActioner:
 
 class BundleGit(BundleActioner):
     def clone(self, source, name):
-        return subprocess.check_output(['git', 'clone', source, name]);
+        return subprocess.check_output(['git', 'clone', source, name]).decode('utf-8');
     def update(self):
-        return subprocess.check_output(['git', 'pull']);
+        return subprocess.check_output(['git', 'pull']).decode('utf-8');
     
 class BundleHg(BundleActioner):
     def clone(self, source, name):
-        return subprocess.check_output(['hg', 'clone', source, name]);
+        return subprocess.check_output(['hg', 'clone', source, name]).decode('utf-8');
     def update(self):
-        return subprocess.check_output(['hg', 'pull']);
+        return subprocess.check_output(['hg', 'pull']).decode('utf-8');
     
 class BundleLocal(BundleActioner):
     def clone(self, source, name):
-        outmsg = subprocess.check_output(['cp', '-R', source, name]);
+        outmsg = subprocess.check_output(['cp', '-R', source, name]).decode('utf-8');
 
         f = open("%s/.source" %name, 'w');
         f.write(source);
@@ -48,10 +48,10 @@ class BundleLocal(BundleActioner):
 
 class BundleScript(BundleActioner):
     def clone(self, source, name):
-        return subprocess.check_output(['cp', '-R', source, name]);
+        return subprocess.check_output(['cp', '-R', source, name]).decode('utf-8');
 
     def update(self):
-        return subprocess.check_output(['./.update']);
+        return subprocess.check_output(['./.update']).decode('utf-8');
     
 
 actioners = { 'git'    : BundleGit,
