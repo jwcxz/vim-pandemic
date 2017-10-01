@@ -1,3 +1,4 @@
+from __future__ import print_function
 import sys
 
 RED = "\033[1;31m";
@@ -9,10 +10,10 @@ class Printer:
         pass;
 
     def message(self, msg):
-        print msg;
+        print(msg);
 
     def error(self, msg):
-        print >> sys.stderr, "%sERR: %s%s" %(RED, msg, CLR);
+        print("%sERR: %s%s" %(RED, msg, CLR), file=sys.stderr);
 
     def warn(self, msg):
-        print >> sys.stderr, "%sWRN: %s%s" %(YLW, msg, CLR);
+        print("%sWRN: %s%s" %(YLW, msg, CLR), file=sys.stderr);
