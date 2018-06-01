@@ -9,10 +9,10 @@ class Printer:
         pass;
 
     def message(self, msg):
-        print msg;
+        sys.stdout.write('%s\n', msg)
 
     def error(self, msg):
-        print >> sys.stderr, "%sERR: %s%s" %(RED, msg, CLR);
+        sys.stderr.write('%sERR: %s%s\n' % (RED, msg, CLR))
 
     def warn(self, msg):
-        print >> sys.stderr, "%sWRN: %s%s" %(YLW, msg, CLR);
+        sys.stderr.write('%sERR: %s%s\n' % (YLW, msg, CLR))
