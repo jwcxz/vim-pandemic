@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 
-import argparse, ConfigParser, os, sys
+import argparse, os, sys
+try:
+    import configparser as ConfigParser
+except ImportError:
+    import ConfigParser
 
 from Pandemic.printer import Printer
 from Pandemic.bundle import Bundle
@@ -34,7 +38,6 @@ class Pandemic:
                 self.printer.error("Invalid action.");
 
             self.action = actions[actionstr[0]];
-            
             self.parse_config();
             self.action(action_args);
         else:
@@ -51,7 +54,7 @@ class Pandemic:
         for bundle in cfg.sections():
             if not cfg.has_option(bundle, 'source') or \
                not cfg.has_option(bundle, 'type'):
-                   self.printer.error("Bundle '%s' is malformed." % bundle); 
+                   self.printer.error("Bundle '%s' is malformed." % bundle);
                    continue;
 
             # append bundle to bundle list
@@ -84,7 +87,6 @@ class Pandemic:
 
     def add(self, args):
         bundle, btype, source = args;
-        
         # add the new bundle to the list
         self.__append_to_bundles(bundle, source, btype);
         # get the new bundle to the directory
