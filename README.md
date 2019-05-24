@@ -165,7 +165,4 @@ only with Git repositories.
 
 
 [pathogen]:https://github.com/tpope/vim-pathogen
-[Vundle]:https://github.com/gmarik/vundle
-[vim-pandemic]:http://jwcxz.com/git/vim-pandemic
-[pandemic]:http://jwcxz.com/git/vim-pandemic
-[vim-epidemic]:https://github.com/AlphaHydrae/vim-epidemic
+[vim-pandemic]:http://github.com/jalanb/vim-pandemic
