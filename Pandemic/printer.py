@@ -9,10 +9,13 @@ class Printer:
         pass;
 
     def message(self, msg):
-        print msg;
+        print(msg)
+
+    def red_message(self, msg, level):
+        print(f"{RED}{level}: {msg}{CLR}", file=sys.stderr)
 
     def error(self, msg):
-        print >> sys.stderr, "%sERR: %s%s" %(RED, msg, CLR);
+        self.red_message(msg, "ERR")
 
     def warn(self, msg):
-        print >> sys.stderr, "%sWRN: %s%s" %(YLW, msg, CLR);
+        self.red_message(msg, "WRN")
