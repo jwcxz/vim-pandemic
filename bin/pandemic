@@ -11,7 +11,7 @@ from Pandemic.bundle import actioners
 from Pandemic import printer
 
 path_to_default_config = "~/.vim/pandemic-bundles"
-path_to_bundles = "~/.vim/bundle.remote"
+path_to_bundles = "~/.vim/bundle"
 
 
 class Pandemic:
