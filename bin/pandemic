@@ -7,6 +7,7 @@ from configparser import ConfigParser
 
 from Pandemic.printer import Printer
 from Pandemic.bundle import Bundle
+from Pandemic.bundle import actioners
 
 DEF_CONFIG = "~/.vim/pandemic-bundles"
 DEF_BUNDLEDIR = "~/.vim/bundle.remote"
@@ -148,9 +149,8 @@ class Pandemic:
         del self.bundles[bundle]
 
 
-if __name__ == "__main__":
+def parse_args():
     p = argparse.ArgumentParser(description="Manage vim-pathogen bundles.")
-
     p.add_argument(
         "-c",
         "--config",
@@ -159,7 +159,6 @@ if __name__ == "__main__":
         default=DEF_CONFIG,
         help="remote bundle configuration file",
     )
-
     p.add_argument(
         "-b",
         "--bundle-directory",
@@ -168,7 +167,6 @@ if __name__ == "__main__":
         default=DEF_BUNDLEDIR,
         help="directory contaning pandemic-managed bundles",
     )
-
     p.add_argument(
         "-t",
         "--show-types",
@@ -177,21 +175,23 @@ if __name__ == "__main__":
         default=False,
         help="show supported source types",
     )
-
     p.add_argument(
         dest="action",
         action="store",
         nargs="*",
         help="action (list, add BUNDLE TYPE SOURCE, remove BUNDLE, update [BUNDLE, BUNDLE, ...], list-dead)",
     )
+    return p.parse_args()
 
-    args = p.parse_args()
 
+def main():
+    args = parse_args()
     printer = Printer()
-
-    if args.showtypes == True:
-        from Pandemic.bundle import actioners
-
+    if args.showtypes:
         printer.message("Supported types: %s" % " ".join(actioners.keys()))
-
     pan = Pandemic(args.action, args.config, args.bundledir, printer)
+    return os.EX_OK
+
+
+if __name__ == "__main__":
+    sys.exit(main())
