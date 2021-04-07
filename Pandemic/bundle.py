@@ -3,7 +3,7 @@ import shutil
 import subprocess
 
 from Pandemic import printer
-
+from Pandemic import shell
 
 class BundleActioner:
     def clone(self, source, name):
@@ -18,23 +18,23 @@ class BundleActioner:
 
 class BundleGit(BundleActioner):
     def clone(self, source, name):
-        return subprocess.check_output(["git", "clone", source, name])
+        return shell.run(["git", "clone", source, name])
 
     def update(self):
-        return subprocess.check_output(["git", "pull", "--rebase"])
+        return shell.run(["git", "pull", "--rebase"])
 
 
 class BundleHg(BundleActioner):
     def clone(self, source, name):
-        return subprocess.check_output(["hg", "clone", source, name])
+        return shell.run(["hg", "clone", source, name])
 
     def update(self):
-        return subprocess.check_output(["hg", "pull"])
+        return shell.run(["hg", "pull"])
 
 
 class BundleLocal(BundleActioner):
     def clone(self, source, name):
-        outmsg = subprocess.check_output(["cp", "-R", source, name])
+        outmsg = shell.run(["cp", "-R", source, name])
         with open(f"{name}/.source", "w") as stream:
             stream.write(source)
         return outmsg
@@ -49,10 +49,10 @@ class BundleLocal(BundleActioner):
 
 class BundleScript(BundleActioner):
     def clone(self, source, name):
-        return subprocess.check_output(["cp", "-R", source, name])
+        return shell.run(["cp", "-R", source, name])
 
     def update(self):
-        return subprocess.check_output(["./.update"])
+        return shell.run(["./.update"])
 
 
 actioners = {

@@ -9,6 +9,7 @@ from functools import partial
 from Pandemic.bundle import Bundle
 from Pandemic.bundle import actioners
 from Pandemic import printer
+from Pandemic.shell import BashError
 
 path_to_default_config = "~/.vim/pandemic-bundles"
 path_to_bundles = "~/.vim/bundle"
@@ -179,7 +180,11 @@ def main():
     args = parse_args()
     if args.showtypes:
         printer.info("Supported types: %s" % " ".join(actioners.keys()))
-    pan = Pandemic(args.action, args.config, args.path_to_bundles)
+    try:
+        _ = Pandemic(args.action, args.config, args.path_to_bundles)
+    except BashError as e:
+        printer.error(str(e))
+        return 2
     return os.EX_OK
 
 
