@@ -21,7 +21,7 @@ class BundleGit(BundleActioner):
         return subprocess.check_output(["git", "clone", source, name])
 
     def update(self):
-        return subprocess.check_output(["git", "pull"])
+        return subprocess.check_output(["git", "pull", "--rebase"])
 
 
 class BundleHg(BundleActioner):
