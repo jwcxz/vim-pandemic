@@ -1,4 +1,4 @@
-"""Handle shell operations for gitgutter"""
+"""Handle shell operations for pandemic"""
 
 from subprocess import getstatusoutput
 from typing import List

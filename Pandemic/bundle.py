@@ -1,3 +1,5 @@
+"""Handle bundles for pandemic"""
+
 import os
 import shutil
 import subprocess
