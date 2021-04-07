@@ -9,7 +9,7 @@ class Printer:
     def __init__(self):
         pass
 
-    def message(self, msg):
+    def info(self, msg):
         print(msg)
 
     def red_message(self, msg, level):

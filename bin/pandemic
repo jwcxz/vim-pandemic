@@ -87,7 +87,7 @@ class Pandemic:
                 e = "enabled"
             else:
                 e = "disabled"
-            self.printer.message("%s: %s %s %s" % (b, e, bundle.btype, bundle.source))
+            self.printer.info("%s: %s %s %s" % (b, e, bundle.btype, bundle.source))
 
     def add(self, args):
         bundle, btype, source = args
@@ -123,7 +123,7 @@ class Pandemic:
             updates = args
 
         for bundle in updates:
-            self.printer.message("Updating %s..." % bundle)
+            self.printer.info("Updating %s..." % bundle)
             self.bundles[bundle].update()
 
     def listdead(self, args):
@@ -132,11 +132,11 @@ class Pandemic:
 
         for b in found_bundles:
             if b not in self.bundles.keys():
-                self.printer.message("Bundle %s not found in database." % b)
+                self.printer.info("Bundle %s not found in database." % b)
 
         for b in self.bundles.keys():
             if b not in found_bundles:
-                self.printer.message(
+                self.printer.info(
                     "Bundle %s not found on filesystem.  Run pandemic update." % b
                 )
 
@@ -188,7 +188,7 @@ def main():
     args = parse_args()
     printer = Printer()
     if args.showtypes:
-        printer.message("Supported types: %s" % " ".join(actioners.keys()))
+        printer.info("Supported types: %s" % " ".join(actioners.keys()))
     pan = Pandemic(args.action, args.config, args.bundledir, printer)
     return os.EX_OK
 

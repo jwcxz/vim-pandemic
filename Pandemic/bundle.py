@@ -96,7 +96,7 @@ class Bundle:
             self.remove()
 
         msg = self.actioner.clone(self.source, self.name)
-        self.printer.message(msg)
+        self.printer.info(msg)
 
         self.__restorecwd()
 
@@ -107,7 +107,7 @@ class Bundle:
 
         if self.bname != None:
             msg = self.actioner.remove(self.bname)
-            self.printer.message(msg)
+            self.printer.info(msg)
         else:
             self.printer.warn("%s doesn't exist!" % (self.name))
 
@@ -121,7 +121,7 @@ class Bundle:
         if self.bname != None:
             os.chdir(self.bname)
             msg = self.actioner.update()
-            self.printer.message(msg)
+            self.printer.info(msg)
         else:
             self.printer.warn("%s doesn't exist!" % (self.name))
             self.clone()
