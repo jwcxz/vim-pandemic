@@ -1,4 +1,6 @@
-import os, shutil, subprocess
+import os
+import shutil
+import subprocess
 
 
 class BundleActioner:
