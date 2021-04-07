@@ -6,9 +6,9 @@ import sys
 from configparser import ConfigParser
 from functools import partial
 
+from Pandemic import printer
 from Pandemic.bundle import Bundle
 from Pandemic.bundle import actioners
-from Pandemic import printer
 from Pandemic.shell import BashError
 
 path_to_default_config = "~/.vim/pandemic-bundles"
@@ -27,27 +27,23 @@ class Pandemic:
 
         self.config = os.path.expanduser(config)
 
-        if len(actionstr):
-            action_args = actionstr[1:]
+        action_args = actionstr[1:]
 
-            actions = {
-                "list": self.list,
-                "add": self.add,
-                "remove": self.remove,
-                "update": self.update,
-                "list-dead": self.listdead,
-            }
+        actions = {
+            "list": self.list,
+            "add": self.add,
+            "remove": self.remove,
+            "update": self.update,
+            "list-dead": self.listdead,
+        }
 
-            if actionstr[0] not in actions:
-                printer.error("Invalid action.")
+        if actionstr[0] not in actions:
+            printer.error("Invalid action.")
 
-            self.action = actions[actionstr[0]]
+        self.action = actions[actionstr[0]]
 
-            self.parse_config()
-            self.action(action_args)
-        else:
-            printer.error("No action specified.")
-            sys.exit(1)
+        self.parse_config()
+        self.action(action_args)
 
     def parse_config(self):
         config_parser = ConfigParser()
@@ -180,6 +176,9 @@ def main():
     args = parse_args()
     if args.showtypes:
         printer.info("Supported types: %s" % " ".join(actioners.keys()))
+    if not args.action:
+        printer.error("No action specified.")
+        return 1
     try:
         _ = Pandemic(args.action, args.config, args.path_to_bundles)
     except BashError as e:
