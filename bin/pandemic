@@ -5,9 +5,9 @@ import os
 import sys
 from configparser import ConfigParser
 
-from Pandemic.printer import Printer
 from Pandemic.bundle import Bundle
 from Pandemic.bundle import actioners
+from Pandemic import printer
 
 DEF_CONFIG = "~/.vim/pandemic-bundles"
 DEF_BUNDLEDIR = "~/.vim/bundle.remote"
@@ -17,9 +17,8 @@ class Pandemic:
     bundles = {}
 
     def __init__(
-        self, actionstr, config=DEF_CONFIG, bundledir=DEF_BUNDLEDIR, printer=Printer()
+        self, actionstr, config=DEF_CONFIG, bundledir=DEF_BUNDLEDIR
     ):
-        self.printer = printer
 
         self.bundledir = os.path.expanduser(bundledir)
 
@@ -40,14 +39,14 @@ class Pandemic:
             }
 
             if actionstr[0] not in actions.keys():
-                self.printer.error("Invalid action.")
+                printer.error("Invalid action.")
 
             self.action = actions[actionstr[0]]
 
             self.parse_config()
             self.action(action_args)
         else:
-            self.printer.error("No action specified.")
+            printer.error("No action specified.")
             sys.exit(1)
 
     def parse_config(self):
@@ -60,7 +59,7 @@ class Pandemic:
             if not cfg.has_option(bundle, "source") or not cfg.has_option(
                 bundle, "type"
             ):
-                self.printer.error("Bundle '%s' is malformed." % bundle)
+                printer.error("Bundle '%s' is malformed." % bundle)
                 continue
 
             # append bundle to bundle list
@@ -87,7 +86,7 @@ class Pandemic:
                 e = "enabled"
             else:
                 e = "disabled"
-            self.printer.info("%s: %s %s %s" % (b, e, bundle.btype, bundle.source))
+            printer.info("%s: %s %s %s" % (b, e, bundle.btype, bundle.source))
 
     def add(self, args):
         bundle, btype, source = args
@@ -101,7 +100,7 @@ class Pandemic:
 
     def remove(self, args):
         if len(args) > 1 and args[0] == "-k":
-            self.printer.warn("Keeping bundle '%s'... this is a bad idea." % bundle)
+            printer.warn("Keeping bundle '%s'... this is a bad idea." % bundle)
             keep = True
             bundles = args[1:]
         else:
@@ -123,7 +122,7 @@ class Pandemic:
             updates = args
 
         for bundle in updates:
-            self.printer.info("Updating %s..." % bundle)
+            printer.info("Updating %s..." % bundle)
             self.bundles[bundle].update()
 
     def listdead(self, args):
@@ -132,17 +131,17 @@ class Pandemic:
 
         for b in found_bundles:
             if b not in self.bundles.keys():
-                self.printer.info("Bundle %s not found in database." % b)
+                printer.info("Bundle %s not found in database." % b)
 
         for b in self.bundles.keys():
             if b not in found_bundles:
-                self.printer.info(
+                printer.info(
                     "Bundle %s not found on filesystem.  Run pandemic update." % b
                 )
 
     def __append_to_bundles(self, bundle, source, btype):
         self.bundles[bundle] = Bundle(
-            bundle, source, btype, self.bundledir, self.printer
+            bundle, source, btype, self.bundledir
         )
 
     def __delete_from_bundles(self, bundle):
@@ -186,10 +185,9 @@ def parse_args():
 
 def main():
     args = parse_args()
-    printer = Printer()
     if args.showtypes:
         printer.info("Supported types: %s" % " ".join(actioners.keys()))
-    pan = Pandemic(args.action, args.config, args.bundledir, printer)
+    pan = Pandemic(args.action, args.config, args.bundledir)
     return os.EX_OK
 
 

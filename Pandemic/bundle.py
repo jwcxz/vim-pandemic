@@ -2,6 +2,8 @@ import os
 import shutil
 import subprocess
 
+from Pandemic import printer
+
 
 class BundleActioner:
     def __init__(self):
@@ -72,8 +74,7 @@ actioners = {
 
 
 class Bundle:
-    def __init__(self, name, source, btype, bdir, printer):
-        self.printer = printer
+    def __init__(self, name, source, btype, bdir):
 
         self.name = name
         self.bdir = os.path.expanduser(bdir)
@@ -92,11 +93,11 @@ class Bundle:
             # path already exists
             # best action to take is probably to just remove and clone
             # XXX: this isn't safe, though :(
-            self.printer.warn("%s exists!" % (self.bname))
+            printer.warn("%s exists!" % (self.bname))
             self.remove()
 
         msg = self.actioner.clone(self.source, self.name)
-        self.printer.info(msg)
+        printer.info(msg)
 
         self.__restorecwd()
 
@@ -107,9 +108,9 @@ class Bundle:
 
         if self.bname != None:
             msg = self.actioner.remove(self.bname)
-            self.printer.info(msg)
+            printer.info(msg)
         else:
-            self.printer.warn("%s doesn't exist!" % (self.name))
+            printer.warn("%s doesn't exist!" % (self.name))
 
         self.__restorecwd()
 
@@ -121,9 +122,9 @@ class Bundle:
         if self.bname != None:
             os.chdir(self.bname)
             msg = self.actioner.update()
-            self.printer.info(msg)
+            printer.info(msg)
         else:
-            self.printer.warn("%s doesn't exist!" % (self.name))
+            printer.warn("%s doesn't exist!" % (self.name))
             self.clone()
 
         self.__restorecwd()
@@ -135,7 +136,7 @@ class Bundle:
         if os.path.exists(orig):
             return self.name
         elif os.path.exists(disabled):
-            self.printer.warn("Using disabled form of %s..." % self.name)
+            printer.warn("Using disabled form of %s..." % self.name)
             return "%s~" % self.name
         else:
             return None
