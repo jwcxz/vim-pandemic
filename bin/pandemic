@@ -10,19 +10,19 @@ from Pandemic.bundle import Bundle
 from Pandemic.bundle import actioners
 from Pandemic import printer
 
-DEF_CONFIG = "~/.vim/pandemic-bundles"
-DEF_BUNDLEDIR = "~/.vim/bundle.remote"
+path_to_default_config = "~/.vim/pandemic-bundles"
+path_to_bundles = "~/.vim/bundle.remote"
 
 
 class Pandemic:
     bundles = {}
 
-    def __init__(self, actionstr, config, bundledir):
+    def __init__(self, actionstr, config, path_to_bundles):
 
-        self.bundledir = os.path.expanduser(bundledir)
+        self.path_to_bundles = os.path.expanduser(path_to_bundles)
 
-        if not os.path.exists(self.bundledir):
-            os.mkdir(self.bundledir)
+        if not os.path.exists(self.path_to_bundles):
+            os.mkdir(self.path_to_bundles)
 
         self.config = os.path.expanduser(config)
 
@@ -49,48 +49,46 @@ class Pandemic:
             sys.exit(1)
 
     def parse_config(self):
-        cfg = ConfigParser()
-        cfg.read(self.config)
+        config_parser = ConfigParser()
+        config_parser.read(self.config)
 
         self.bundles = {}
 
-        optioned = partial(cfg.has_option, bundle)
-        for bundle in cfg.sections():
+        for bundle in config_parser.sections():
+            optioned = partial(config_parser.has_option, bundle)
             if not optioned("source") or not optioned("type"):
                 printer.error("Bundle '%s' is malformed." % bundle)
                 continue
 
             # append bundle to bundle list
             self.__append_to_bundles(
-                bundle, cfg.get(bundle, "source"), cfg.get(bundle, "type")
+                bundle, config_parser.get(bundle, "source"), config_parser.get(bundle, "type")
             )
 
     def save_config(self):
-        cfg = ConfigParser()
+        config_parser = ConfigParser()
         for b in sorted(self.bundles.keys()):
             bundle = self.bundles[b]
-            cfg.add_section(b)
-            cfg.set(b, "source", bundle.source)
-            cfg.set(b, "type", bundle.btype)
+            config_parser.add_section(b)
+            config_parser.set(b, "source", bundle.source)
+            config_parser.set(b, "type", bundle.type)
 
         f = open(self.config, "w")
-        cfg.write(f)
+        config_parser.write(f)
         f.close()
 
     def list(self, args):
-        for b in sorted(self.bundles.keys()):
-            bundle = self.bundles[b]
-            if b == bundle.bname:
-                e = "enabled"
-            else:
-                e = "disabled"
-            printer.info("%s: %s %s %s" % (b, e, bundle.btype, bundle.source))
+        for name, bundle in sorted(self.bundles.items()):
+            bundle = self.bundles[name]
+            prefix = "en" if name == bundle.bname else "dis"
+            printer.info(
+                f"{name}: {prefix}abled {bundle.type} {bundle.source}")
 
     def add(self, args):
-        bundle, btype, source = args
+        bundle, type_, source = args
 
         # add the new bundle to the list
-        self.__append_to_bundles(bundle, source, btype)
+        self.__append_to_bundles(bundle, source, type_)
         # get the new bundle to the directory
         self.bundles[bundle].clone()
         # save the new bundle list
@@ -121,21 +119,21 @@ class Pandemic:
 
     def listdead(self, args):
         # list bundles that are no longer in the config
-        found_bundles = os.listdir(self.bundledir)
+        found_bundles = os.listdir(self.path_to_bundles)
 
         for bundle in found_bundles:
             if bundle not in self.bundles:
-                printer.info("Bundle %s not found in database." % bundle)
+                printer.warn("Bundle %s not found in database." % bundle)
 
         for bundle in self.bundles:
             if bundle not in found_bundles:
-                printer.info(
+                printer.warn(
                     "Bundle %s not found on filesystem.  Run pandemic update." % bundle
                 )
 
-    def __append_to_bundles(self, bundle, source, btype):
+    def __append_to_bundles(self, bundle, source, type_):
         self.bundles[bundle] = Bundle(
-            bundle, source, btype, self.bundledir
+            bundle, source, type_, self.path_to_bundles
         )
 
     def __delete_from_bundles(self, bundle):
@@ -149,15 +147,15 @@ def parse_args():
         "--config",
         dest="config",
         action="store",
-        default=DEF_CONFIG,
+        default=path_to_default_config,
         help="remote bundle configuration file",
     )
     p.add_argument(
         "-b",
         "--bundle-directory",
-        dest="bundledir",
+        dest="path_to_bundles",
         action="store",
-        default=DEF_BUNDLEDIR,
+        default=path_to_bundles,
         help="directory contaning pandemic-managed bundles",
     )
     p.add_argument(
@@ -181,7 +179,7 @@ def main():
     args = parse_args()
     if args.showtypes:
         printer.info("Supported types: %s" % " ".join(actioners.keys()))
-    pan = Pandemic(args.action, args.config, args.bundledir)
+    pan = Pandemic(args.action, args.config, args.path_to_bundles)
     return os.EX_OK
 
 

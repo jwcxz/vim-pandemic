@@ -64,20 +64,20 @@ actioners = {
 
 
 class Bundle:
-    def __init__(self, name, source, btype, bdir):
+    def __init__(self, name, source, type_, path_to_bundles):
 
         self.name = name
-        self.bdir = os.path.expanduser(bdir)
+        self.path_to_bundles = os.path.expanduser(path_to_bundles)
         self.source = source
-        self.btype = btype
+        self.type = type_
 
         self.bname = self.__findbundle()
-        self.actioner = actioners[btype]()
+        self.actioner = actioners[type_]()
 
     def clone(self):
         # clone from whatever repository or whatever
         self.__savecwd()
-        os.chdir(self.bdir)
+        os.chdir(self.path_to_bundles)
 
         if self.bname:
             # path already exists
@@ -94,7 +94,7 @@ class Bundle:
     def remove(self):
         # delete an existing bundle directory
         self.__savecwd()
-        os.chdir(self.bdir)
+        os.chdir(self.path_to_bundles)
 
         if self.bname:
             msg = self.actioner.remove(self.bname)
@@ -107,7 +107,7 @@ class Bundle:
     def update(self):
         # update a repository
         self.__savecwd()
-        os.chdir(self.bdir)
+        os.chdir(self.path_to_bundles)
 
         if self.bname:
             os.chdir(self.bname)
@@ -120,8 +120,8 @@ class Bundle:
         self.__restorecwd()
 
     def __findbundle(self):
-        orig = os.path.join(self.bdir, self.name)
-        disabled = os.path.join(self.bdir, "%s~" % self.name)
+        orig = os.path.join(self.path_to_bundles, self.name)
+        disabled = os.path.join(self.path_to_bundles, "%s~" % self.name)
 
         if os.path.exists(orig):
             return self.name
