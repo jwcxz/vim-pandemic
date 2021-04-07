@@ -59,7 +59,9 @@ class Pandemic:
 
             # append bundle to bundle list
             self.__append_to_bundles(
-                bundle, config_parser.get(bundle, "source"), config_parser.get(bundle, "type")
+                bundle,
+                config_parser.get(bundle, "source"),
+                config_parser.get(bundle, "type"),
             )
 
     def save_config(self):
@@ -78,8 +80,7 @@ class Pandemic:
         for name, bundle in sorted(self.bundles.items()):
             bundle = self.bundles[name]
             prefix = "en" if name == bundle.bname else "dis"
-            printer.info(
-                f"{name}: {prefix}abled {bundle.type} {bundle.source}")
+            printer.info(f"{name}: {prefix}abled {bundle.type} {bundle.source}")
 
     def add(self, args):
         bundle, type_, source = args
@@ -129,9 +130,7 @@ class Pandemic:
                 )
 
     def __append_to_bundles(self, bundle, source, type_):
-        self.bundles[bundle] = Bundle(
-            bundle, source, type_, self.path_to_bundles
-        )
+        self.bundles[bundle] = Bundle(bundle, source, type_, self.path_to_bundles)
 
     def __delete_from_bundles(self, bundle):
         del self.bundles[bundle]

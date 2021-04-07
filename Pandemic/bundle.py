@@ -5,6 +5,7 @@ import subprocess
 from Pandemic import printer
 from Pandemic import shell
 
+
 class BundleActioner:
     def clone(self, source, name):
         raise NotImplementedError

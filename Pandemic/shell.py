@@ -15,4 +15,3 @@ def run(command_parts: List[str]):
     if status:
         raise BashError(output)
     return output
-
