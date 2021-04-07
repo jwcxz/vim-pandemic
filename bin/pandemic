@@ -4,6 +4,7 @@ import argparse
 import os
 import sys
 from configparser import ConfigParser
+from functools import partial
 
 from Pandemic.bundle import Bundle
 from Pandemic.bundle import actioners
@@ -27,7 +28,7 @@ class Pandemic:
 
         self.config = os.path.expanduser(config)
 
-        if len(actionstr) > 0:
+        if len(actionstr):
             action_args = actionstr[1:]
 
             actions = {
@@ -38,7 +39,7 @@ class Pandemic:
                 "list-dead": self.listdead,
             }
 
-            if actionstr[0] not in actions.keys():
+            if actionstr[0] not in actions:
                 printer.error("Invalid action.")
 
             self.action = actions[actionstr[0]]
@@ -55,10 +56,9 @@ class Pandemic:
 
         self.bundles = {}
 
+        optioned = partial(cfg.has_option, bundle)
         for bundle in cfg.sections():
-            if not cfg.has_option(bundle, "source") or not cfg.has_option(
-                bundle, "type"
-            ):
+            if not optioned("source") or not optioned("type"):
                 printer.error("Bundle '%s' is malformed." % bundle)
                 continue
 
@@ -116,12 +116,8 @@ class Pandemic:
         self.save_config()
 
     def update(self, args):
-        if len(args) == 0:
-            updates = self.bundles.keys()
-        else:
-            updates = args
-
-        for bundle in updates:
+        bundles = args if args else self.bundles.keys()
+        for bundle in bundles:
             printer.info("Updating %s..." % bundle)
             self.bundles[bundle].update()
 
@@ -129,14 +125,14 @@ class Pandemic:
         # list bundles that are no longer in the config
         found_bundles = os.listdir(self.bundledir)
 
-        for b in found_bundles:
-            if b not in self.bundles.keys():
-                printer.info("Bundle %s not found in database." % b)
+        for bundle in found_bundles:
+            if bundle not in self.bundles:
+                printer.info("Bundle %s not found in database." % bundle)
 
-        for b in self.bundles.keys():
-            if b not in found_bundles:
+        for bundle in self.bundles:
+            if bundle not in found_bundles:
                 printer.info(
-                    "Bundle %s not found on filesystem.  Run pandemic update." % b
+                    "Bundle %s not found on filesystem.  Run pandemic update." % bundle
                 )
 
     def __append_to_bundles(self, bundle, source, btype):

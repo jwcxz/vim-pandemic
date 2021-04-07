@@ -6,18 +6,14 @@ from Pandemic import printer
 
 
 class BundleActioner:
-    def __init__(self):
-        pass
-
     def clone(self, source, name):
-        return ""
+        raise NotImplementedError
 
     def update(self):
-        return ""
+        raise NotImplementedError
 
     def remove(self, name):
         shutil.rmtree(name)
-        return ""
 
 
 class BundleGit(BundleActioner):
@@ -39,20 +35,14 @@ class BundleHg(BundleActioner):
 class BundleLocal(BundleActioner):
     def clone(self, source, name):
         outmsg = subprocess.check_output(["cp", "-R", source, name])
-
-        f = open("%s/.source" % name, "w")
-        f.write(source)
-        f.close()
-
+        with open(f"{name}/.source", "w") as stream:
+            stream.write(source)
         return outmsg
 
     def update(self):
-        f = open(".source", "r")
-        source = f.read()
-        f.close()
-
+        with open(".source") as stream:
+            source = stream.read()
         name = os.path.split(os.getcwd())[1]
-
         os.chdir(os.path.split(os.getcwd())[0])
         return self.clone(source, name)
 
@@ -89,7 +79,7 @@ class Bundle:
         self.__savecwd()
         os.chdir(self.bdir)
 
-        if self.bname != None:
+        if self.bname:
             # path already exists
             # best action to take is probably to just remove and clone
             # XXX: this isn't safe, though :(
@@ -106,7 +96,7 @@ class Bundle:
         self.__savecwd()
         os.chdir(self.bdir)
 
-        if self.bname != None:
+        if self.bname:
             msg = self.actioner.remove(self.bname)
             printer.info(msg)
         else:
@@ -119,7 +109,7 @@ class Bundle:
         self.__savecwd()
         os.chdir(self.bdir)
 
-        if self.bname != None:
+        if self.bname:
             os.chdir(self.bname)
             msg = self.actioner.update()
             printer.info(msg)
