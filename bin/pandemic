@@ -17,9 +17,7 @@ DEF_BUNDLEDIR = "~/.vim/bundle.remote"
 class Pandemic:
     bundles = {}
 
-    def __init__(
-        self, actionstr, config=DEF_CONFIG, bundledir=DEF_BUNDLEDIR
-    ):
+    def __init__(self, actionstr, config, bundledir):
 
         self.bundledir = os.path.expanduser(bundledir)
 
