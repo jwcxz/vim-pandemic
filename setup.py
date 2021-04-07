@@ -1,4 +1,4 @@
-from distutils.core import  setup
+from distutils.core import setup
 
 setup(
     name="Pandemic",
@@ -6,6 +6,6 @@ setup(
     author="http://jwcxz.com/",
     url="http://jwcxz.com/projects/vim-pandemic",
     requires=["argparse"],
-    packages=["Pandemic"], 
-    scripts=["bin/pandemic"]
+    packages=["Pandemic"],
+    scripts=["bin/pandemic"],
 )

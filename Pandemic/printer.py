@@ -1,12 +1,13 @@
 import sys
 
-RED = "\033[1;31m";
-YLW = "\033[1;33m";
-CLR = "\033[0m";
+RED = "\033[1;31m"
+YLW = "\033[1;33m"
+CLR = "\033[0m"
+
 
 class Printer:
     def __init__(self):
-        pass;
+        pass
 
     def message(self, msg):
         print(msg)
