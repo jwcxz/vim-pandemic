@@ -7,6 +7,7 @@ import sys
 from configparser import ConfigParser
 from functools import partial
 
+from Pandemic import __version__
 from Pandemic import printer
 from Pandemic.bundle import Bundle
 from Pandemic.bundle import actioners
@@ -164,6 +165,14 @@ def parse_args():
         help="show supported source types",
     )
     p.add_argument(
+        "-v",
+        "--version",
+        dest="showversion",
+        action="store_true",
+        default=False,
+        help="show version",
+    )
+    p.add_argument(
         dest="action",
         action="store",
         nargs="*",
@@ -176,6 +185,10 @@ def main():
     args = parse_args()
     if args.showtypes:
         printer.info("Supported types: %s" % " ".join(actioners.keys()))
+        return os.EX_OK
+    if args.showversion:
+        printer.info(f"{sys.argv[0]} version: {__version__}")
+        return os.EX_OK
     if not args.action:
         printer.error("No action specified.")
         return 1
