@@ -1,18 +1,21 @@
+"""Handle printing for pandemic"""
+
 import sys
 
-RED = "\033[1;31m";
-YLW = "\033[1;33m";
-CLR = "\033[0m";
 
-class Printer:
-    def __init__(self):
-        pass;
+def info(msg):
+    print(msg)
 
-    def message(self, msg):
-        print msg;
 
-    def error(self, msg):
-        print >> sys.stderr, "%sERR: %s%s" %(RED, msg, CLR);
+def _red_message(msg, level):
+    red = "\033[1;31m"
+    no_colour = "\033[0m"
+    print(f"{red}{level}: {msg}{no_colour}", file=sys.stderr)
 
-    def warn(self, msg):
-        print >> sys.stderr, "%sWRN: %s%s" %(YLW, msg, CLR);
+
+def error(msg):
+    _red_message(msg, "ERR")
+
+
+def warn(msg):
+    _red_message(msg, "WRN")

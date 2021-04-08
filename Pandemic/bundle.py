@@ -1,140 +1,141 @@
-import os, shutil, subprocess
+"""Handle bundles for pandemic"""
+
+import os
+import shutil
+import subprocess
+
+from Pandemic import printer
+from Pandemic import shell
+
 
 class BundleActioner:
-    def __init__(self): pass;
-
     def clone(self, source, name):
-        return "";
+        raise NotImplementedError
 
     def update(self):
-        return "";
+        raise NotImplementedError
 
     def remove(self, name):
-        shutil.rmtree(name);
-        return "";
+        shutil.rmtree(name)
 
 
 class BundleGit(BundleActioner):
     def clone(self, source, name):
-        return subprocess.check_output(['git', 'clone', source, name]);
+        return shell.run(["git", "clone", source, name])
+
     def update(self):
-        return subprocess.check_output(['git', 'pull']);
-    
+        return shell.run(["git", "pull", "--rebase"])
+
+
 class BundleHg(BundleActioner):
     def clone(self, source, name):
-        return subprocess.check_output(['hg', 'clone', source, name]);
+        return shell.run(["hg", "clone", source, name])
+
     def update(self):
-        return subprocess.check_output(['hg', 'pull']);
-    
+        return shell.run(["hg", "pull"])
+
+
 class BundleLocal(BundleActioner):
     def clone(self, source, name):
-        outmsg = subprocess.check_output(['cp', '-R', source, name]);
-
-        f = open("%s/.source" %name, 'w');
-        f.write(source);
-        f.close();
-
-        return outmsg;
+        outmsg = shell.run(["cp", "-R", source, name])
+        with open(f"{name}/.source", "w") as stream:
+            stream.write(source)
+        return outmsg
 
     def update(self):
-        f = open(".source", 'r');
-        source = f.read();
-        f.close();
-        
-        name = os.path.split(os.getcwd())[1];
+        with open(".source") as stream:
+            source = stream.read()
+        name = os.path.split(os.getcwd())[1]
+        os.chdir(os.path.split(os.getcwd())[0])
+        return self.clone(source, name)
 
-        os.chdir(os.path.split(os.getcwd())[0]);
-        return self.clone(source, name);
 
 class BundleScript(BundleActioner):
     def clone(self, source, name):
-        return subprocess.check_output(['cp', '-R', source, name]);
+        return shell.run(["cp", "-R", source, name])
 
     def update(self):
-        return subprocess.check_output(['./.update']);
-    
+        return shell.run(["./.update"])
 
-actioners = { 'git'    : BundleGit,
-              'hg'     : BundleHg,
-              'local'  : BundleLocal,
-              'script' : BundleScript };
+
+actioners = {
+    "git": BundleGit,
+    "hg": BundleHg,
+    "local": BundleLocal,
+    "script": BundleScript,
+}
 
 
 class Bundle:
-    def __init__(self, name, source, btype, bdir, printer):
-        self.printer = printer;
+    def __init__(self, name, source, type_, path_to_bundles):
 
-        self.name = name;
-        self.bdir = os.path.expanduser(bdir);
-        self.source = source;
-        self.btype = btype;
+        self.name = name
+        self.path_to_bundles = os.path.expanduser(path_to_bundles)
+        self.source = source
+        self.type = type_
 
-        self.bname = self.__findbundle();
-        self.actioner = actioners[btype]();
-
+        self.bname = self.__findbundle()
+        self.actioner = actioners[type_]()
 
     def clone(self):
         # clone from whatever repository or whatever
-        self.__savecwd();
-        os.chdir(self.bdir);
-        
-        if self.bname != None:
+        self.__savecwd()
+        os.chdir(self.path_to_bundles)
+
+        if self.bname:
             # path already exists
             # best action to take is probably to just remove and clone
             # XXX: this isn't safe, though :(
-            self.printer.warn("%s exists!" % (self.bname));
-            self.remove();
+            printer.warn("%s exists!" % (self.bname))
+            self.remove()
 
-        msg = self.actioner.clone(self.source, self.name);
-        self.printer.message(msg);
-        
-        self.__restorecwd();
+        msg = self.actioner.clone(self.source, self.name)
+        printer.info(msg)
 
+        self.__restorecwd()
 
     def remove(self):
         # delete an existing bundle directory
-        self.__savecwd();
-        os.chdir(self.bdir);
+        self.__savecwd()
+        os.chdir(self.path_to_bundles)
 
-        if self.bname != None:
-            msg = self.actioner.remove(self.bname);
-            self.printer.message(msg);
+        if self.bname:
+            msg = self.actioner.remove(self.bname)
+            printer.info(msg)
         else:
-            self.printer.warn("%s doesn't exist!" % (self.name));
+            printer.warn("%s doesn't exist!" % (self.name))
 
-        self.__restorecwd();
-
+        self.__restorecwd()
 
     def update(self):
         # update a repository
-        self.__savecwd();
-        os.chdir(self.bdir);
+        self.__savecwd()
+        os.chdir(self.path_to_bundles)
 
-        if self.bname != None:
-            os.chdir(self.bname);
-            msg = self.actioner.update();
-            self.printer.message(msg);
+        if self.bname:
+            os.chdir(self.bname)
+            msg = self.actioner.update()
+            printer.info(msg)
         else:
-            self.printer.warn("%s doesn't exist!" % (self.name));
-            self.clone();
-        
-        self.__restorecwd();
+            printer.warn("%s doesn't exist!" % (self.name))
+            self.clone()
 
+        self.__restorecwd()
 
     def __findbundle(self):
-        orig = os.path.join(self.bdir, self.name);
-        disabled = os.path.join(self.bdir, "%s~" % self.name);
+        orig = os.path.join(self.path_to_bundles, self.name)
+        disabled = os.path.join(self.path_to_bundles, "%s~" % self.name)
 
         if os.path.exists(orig):
-            return self.name;
+            return self.name
         elif os.path.exists(disabled):
-            self.printer.warn("Using disabled form of %s..." % self.name);
-            return "%s~" % self.name;
+            printer.warn("Using disabled form of %s..." % self.name)
+            return "%s~" % self.name
         else:
-            return None;
-    
+            return None
+
     def __savecwd(self):
-        self.__lastcwd = os.getcwd();
+        self.__lastcwd = os.getcwd()
 
     def __restorecwd(self):
-        os.chdir(self.__lastcwd);
+        os.chdir(self.__lastcwd)
